@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-mongoose.connect("mongodb+srv://rohitMobi:Rohit5053@cluster0.1eqze.mongodb.net/?retryWrites=true&w=majority").then(() => {
+mongoose.connect("mongodb+srv://ArbitrageBot:ArbitrageBot123@cluster0.idmhy.mongodb.net/ArbitrageBot?retryWrites=true&w=majority").then(() => {
     console.log("Database Connected");
 });
 
