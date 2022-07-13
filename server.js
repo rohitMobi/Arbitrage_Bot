@@ -1,10 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 
 app.use(express.json());
 
-mongoose.connect("mongodb+srv://ArbitrageBot:ArbitrageBot123@cluster0.idmhy.mongodb.net/ArbitrageBot?retryWrites=true&w=majority").then(() => {
+mongoose.connect(process.env.DEVELOPMENT_DB_URL).then(() => {
     console.log("Database Connected");
 });
 
