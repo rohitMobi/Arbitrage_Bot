@@ -1,6 +1,7 @@
 const userModel = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
 const bcryptjs = require("bcryptjs");
+const jwt = require('jsonwebtoken');
 const { isEmpty, validateEmail, validatePassword } = require("../helper/validationFunction.helper")
 
 
@@ -31,5 +32,28 @@ exports.createUser = (req, res) => {
 
     } catch (error) {
         res.status(500).send({ status: "error", message: error });
+    }
+}
+exports.UserLogin = async (req,res)=>{    
+    const{email,password}=req.body;
+    if(email && password){
+        let user = await userModel.findOne({email:email});
+        if(user){
+            let check = await bcryptjs.compareSync(password, user.password);
+            console.log(check);
+            if(check){
+                let token = jwt.sign({userId:user._id},process.env.Secret,{expiresIn:"10 min"});
+                return  res.status(200).json({status:"Success",message:"Login Successfully","token valid for 10 min":"token","token":token});
+
+            }else{
+                return res.status(500).json({status:"error", message:"Email or Password is Not Valid"});
+            }
+
+        }else{
+            return res.status(500).json({status:"error",message:"user doesn't exits"});
+        }
+
+    }else{
+        return res.send(500).json({status:"error",message:"Please enter valid email and password"});
     }
 }
