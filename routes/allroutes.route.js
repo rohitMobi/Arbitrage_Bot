@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user.controller")
 
 
-// Wallets API
-router.post('/user/wallet/create', userController.createWallet);
+// SignUp API
+router.post('/user/signup', userController.createUser);
 
 module.exports = router;
