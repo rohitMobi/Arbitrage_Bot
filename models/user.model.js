@@ -6,7 +6,6 @@ var userModel = new schema(
   {
     email: {
       type: String,
-      default:""
     },
     name: {
       type: String
