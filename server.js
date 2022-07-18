@@ -10,7 +10,7 @@ app.use(express.json());
 const swaggerOptions = {
     swaggerDefinition: {
         info: {
-            title: 'Catchphrases REST API',
+            title: 'Arbitrage_bots API',
             description: "A REST API built with Express and MongoDB. This API provides movie catchphrases and the context of the catchphrase in the movie."
         },
     },
