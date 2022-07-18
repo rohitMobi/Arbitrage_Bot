@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 
-const WalletSchema = new mongoose.Schema({
+const TransationSchema = new mongoose.Schema({
     userId : { 
         type: mongoose.Schema.Types.ObjectId,
         role: "users" 
     },
-	userBalance:{
-        type:Number
+	amount: { 
+        type: Number 
     },
-	walletAddress: { 
-        type: String 
+	type: { 
+        type: String,
+        enum: ['CREDIT', 'DEBIT']
     },
 	status : { 
         type: String,
@@ -17,4 +18,4 @@ const WalletSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model("wallats", WalletSchema);
+module.exports = mongoose.model("transations", TransationSchema);

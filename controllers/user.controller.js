@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
+const transaction = require('../models/transaction.model');
 const bcryptjs = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const { isEmpty, validateEmail, validatePassword } = require("../helper/validationFunction.helper");
@@ -35,6 +36,7 @@ exports.createUser = (req, res) => {
         res.status(500).send({ status: "error", message: error });
     }
 }
+
 exports.UserLogin = async (req,res)=>{    
     const{email,password}=req.body;
 
@@ -60,5 +62,73 @@ exports.UserLogin = async (req,res)=>{
     }
 }
 
+<<<<<<< HEAD
 
         
+=======
+exports.getUsers = async (req,res) =>{
+    try {
+        let result = await userModel.find()
+        res.status(200).json({status:"Success",result});
+    } catch (error) {
+        res.send({ responseCode: 404, responseMessage: "Unable to Load" });
+    }
+}
+
+exports.addWalletMoney = async (req,res) => {
+    const { userBalance, walletAddress } = req.body;
+    let userId = req.params.userId;
+    let userResult = await userModel.findOne({ userId: userId, status: "ACTIVE" });
+    if (!userResult) {
+        return res.send({ responseCode: 404, responseMessage: "User not found." });
+    }
+
+}
+exports.withdrawAmount = async (req,res) =>{
+    const { amount} = req.body;
+    let userId = req.params.userId;
+    let userResult = await userModel.findOne({ userId: userId, status: "ACTIVE" });
+    if (!userResult) {
+        return res.send({ responseCode: 404, responseMessage: "User not found." });
+    }
+
+    if(!amount){
+        return res.status(400).json({status:"error",message:"Enter the Amount"});
+    }
+    try {
+        let doc = new transaction({
+           userId:userId,
+           amount:amount,
+           type:"DEBIT",
+           status:"ACTIVE"
+        });
+        doc.save();
+        res.send({responseCode:200, responseMessage:"Amount Withdrawl Successfull"})
+    } catch (error) {
+        res.send({responseCode:400, responseMessage:"Transaction Failed"})
+    }
+}
+
+exports.creditAmount = async (req,res) =>{
+    const { amount } = req.body;
+    if (!userResult) {
+        return res.send({ responseCode: 404, responseMessage: "User not found." });
+    }
+    if(!amount){
+        return res.status(400).json({status:"error",message:"Enter the Amount"});
+    }
+    try {
+        let doc = new transaction({
+           userId:userId,
+           amount:amount,
+           type:"CREBIT",
+           status:"ACTIVE"
+        });
+        doc.save();
+        res.send({responseCode:200, responseMessage:"Amount Credit Successfull"})
+    } catch (error) {
+        res.send({responseCode:400, responseMessage:"Transaction Failed"})
+    }
+}
+ 
+>>>>>>> 8fd97cd9da83adfa98a282c68283374a823f6bc5
