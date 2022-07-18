@@ -5,11 +5,8 @@ const WalletSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         role: "users" 
     },
-	oldBalance: { 
-        type: Number 
-    },
-	newBalance: { 
-        type: Number 
+	userBalance:{
+        type:Number
     },
 	walletAddress: { 
         type: String 

@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
+const transaction = require('../models/transaction.model');
 const bcryptjs = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const { isEmpty, validateEmail, validatePassword } = require("../helper/validationFunction.helper")
@@ -34,6 +35,7 @@ exports.createUser = (req, res) => {
         res.status(500).send({ status: "error", message: error });
     }
 }
+
 exports.UserLogin = async (req,res)=>{    
     const{email,password}=req.body;
     if(email && password){
@@ -57,35 +59,69 @@ exports.UserLogin = async (req,res)=>{
         return res.send(500).json({status:"error",message:"Please enter valid email and password"});
     }
 }
-<<<<<<< HEAD
-exports.transaction = async (req,res) =>{
-    const { newBalance, walletAddress } = req.body;
+
+exports.getUsers = async (req,res) =>{
+    try {
+        let result = await userModel.find()
+        res.status(200).json({status:"Success",result});
+    } catch (error) {
+        res.send({ responseCode: 404, responseMessage: "Unable to Load" });
+    }
+}
+
+exports.addWalletMoney = async (req,res) => {
+    const { userBalance, walletAddress } = req.body;
     let userId = req.params.userId;
-    if(newBalance){
-        return res.status(400).json({message:"Enter the Balance"});
-    }
-    if(walletAddress){
-       return res.status(400).json({message:"Enter the Wallet Address"});
-    }
-    let user = await Wallet.findById({_id: userId})
-    if(user){
-        try {
-            let oldBalance = user.oldBalance;
-        let doc = new Wallet({
-            userId,
-            oldBalance,
-            newBalance,
-            walletAddress
-        });
-        doc.save();
-        res.status(200).json({status:"Success", message:"transaction successfully"})
-        } catch (error) {
-           res.status(400).json({status:"success",message:"Transaction Failed due to server error"});
-        }
-    }else{
-        return res.status(400).json({message:"User doesn't exists"})
+    let userResult = await userModel.findOne({ userId: userId, status: "ACTIVE" });
+    if (!userResult) {
+        return res.send({ responseCode: 404, responseMessage: "User not found." });
     }
 
 }
-=======
->>>>>>> 42bdd5a064c40f2ed7bdc35d41fd0615af83919c
+exports.withdrawAmount = async (req,res) =>{
+    const { amount} = req.body;
+    let userId = req.params.userId;
+    let userResult = await userModel.findOne({ userId: userId, status: "ACTIVE" });
+    if (!userResult) {
+        return res.send({ responseCode: 404, responseMessage: "User not found." });
+    }
+
+    if(!amount){
+        return res.status(400).json({status:"error",message:"Enter the Amount"});
+    }
+    try {
+        let doc = new transaction({
+           userId:userId,
+           amount:amount,
+           type:"DEBIT",
+           status:"ACTIVE"
+        });
+        doc.save();
+        res.send({responseCode:200, responseMessage:"Amount Withdrawl Successfull"})
+    } catch (error) {
+        res.send({responseCode:400, responseMessage:"Transaction Failed"})
+    }
+}
+
+exports.creditAmount = async (req,res) =>{
+    const { amount } = req.body;
+    if (!userResult) {
+        return res.send({ responseCode: 404, responseMessage: "User not found." });
+    }
+    if(!amount){
+        return res.status(400).json({status:"error",message:"Enter the Amount"});
+    }
+    try {
+        let doc = new transaction({
+           userId:userId,
+           amount:amount,
+           type:"CREBIT",
+           status:"ACTIVE"
+        });
+        doc.save();
+        res.send({responseCode:200, responseMessage:"Amount Credit Successfull"})
+    } catch (error) {
+        res.send({responseCode:400, responseMessage:"Transaction Failed"})
+    }
+}
+ 
