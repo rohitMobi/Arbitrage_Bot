@@ -2,8 +2,25 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 app.use(express.json());
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: 'Catchphrases REST API',
+            description: "A REST API built with Express and MongoDB. This API provides movie catchphrases and the context of the catchphrase in the movie."
+        },
+    },
+    apis: ["./routes/allroutes.route"]
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+
 
 mongoose.connect(process.env.DEVELOPMENT_DB_URL).then(() => {
     console.log("Database Connected");

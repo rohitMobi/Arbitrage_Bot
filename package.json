@@ -25,6 +25,8 @@
     "mongoose": "^6.4.2",
     "nodemailer": "^6.7.6",
     "nodemon": "^2.0.19",
-    "otp-generator": "^4.0.0"
+    "otp-generator": "^4.0.0",
+    "swagger-jsdoc": "^6.0.0",
+    "swagger-ui-express": "^4.5.0"
   }
 }

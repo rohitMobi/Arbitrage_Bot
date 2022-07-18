@@ -2,7 +2,8 @@ const userModel = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
 const bcryptjs = require("bcryptjs");
 const jwt = require('jsonwebtoken');
-const { isEmpty, validateEmail, validatePassword } = require("../helper/validationFunction.helper")
+const { isEmpty, validateEmail, validatePassword } = require("../helper/validationFunction.helper");
+const { findOne } = require("../models/user.model");
 
 
 exports.createUser = (req, res) => {
@@ -13,7 +14,7 @@ exports.createUser = (req, res) => {
             if(!validateEmail(email)){
                 return res.status(500).send({ status: "error", message: "Email not valid" });    
             }
-    
+            
             if(!validatePassword(password)){
                 return res.status(500).send({ status: "error", message: "Password Not Valid required special char, numeric or chararacters" });    
             }
@@ -36,6 +37,7 @@ exports.createUser = (req, res) => {
 }
 exports.UserLogin = async (req,res)=>{    
     const{email,password}=req.body;
+
     if(email && password){
         let user = await userModel.findOne({email:email});
         if(user){
@@ -54,6 +56,9 @@ exports.UserLogin = async (req,res)=>{
         }
 
     }else{
-        return res.send(500).json({status:"error",message:"Please enter valid email and password"});
+        return res.send(500).json({status:"error",message:"Please enter valid userName,email and password"});
     }
 }
+
+
+        
