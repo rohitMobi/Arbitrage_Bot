@@ -1,0 +1,45 @@
+async updateProfile(req, res, next) {
+        try {
+            const { userId, email, mobileNumber, name, gender } = req.body;
+            let update, query;
+            let userResult = await userModel.findOne({ _id: userId, status: "ACTIVE" });
+            if (!userResult) {
+                return res.send({ responseCode: 404, responseMessage: "User not found." });
+            }
+            if (email && !mobileNumber) {
+                query = { email: email, _id: { $ne: userResult._id }, status: { $in: ["ACTIVE", "BLOCK"] } };
+                let emailCheck = await userModel.findOne(query);
+                
+                if (emailCheck) return res.send({ responseCode: 409, responseMessage: "Email already exist." });
+
+                update = await userModel.findByIdAndUpdate({ _id: userResult._id }, req.body, { new: true });
+
+                return res.send({ responseCode: 200, responseMessage: "Updated", result: update });
+
+            } else if (mobileNumber && !email) {
+                query = { mobileNumber: mobileNumber, _id: { $ne: userResult._id }, status: { $in: ["ACTIVE", "BLOCK"] } };
+                let mobileCheck = await userModel.findOne(query);
+                if (mobileCheck) return res.send({ responseCode: 409, responseMessage: "Mobile already exist." });
+                update = await userModel.findByIdAndUpdate({ _id: userResult._id }, req.body, { new: true });
+
+                return res.send({ responseCode: 200, responseMessage: "Updated", result: update });
+            } else if (email && mobileNumber) {
+                query = { email: email, mobileNumber: mobileNumber, _id: { $ne: userResult._id }, status: { $in: ["ACTIVE", "BLOCK"] } };
+                let foundData = await userModel.findOne(query);
+                if (foundData) {
+                    if (foundData.email === email) {
+                        return res.send({ responseCode: 409, responseMessage: "Email already exist." });
+                    } else {
+                        return res.send({ responseCode: 409, responseMessage: "Mobile already exist." });
+                    }
+                }
+                update = await userModel.findByIdAndUpdate({ _id: userResult._id }, req.body, { new: true });
+                return res.send({ responseCode: 200, responseMessage: "Updated", result: update });
+            } else {
+                update = await userModel.findByIdAndUpdate({ _id: userResult._id }, req.body, { new: true });
+                return res.send({ responseCode: 200, responseMessage: "Updated", result: update });
+            }
+        } catch (error) {
+            return next(error);
+        }
+    }
