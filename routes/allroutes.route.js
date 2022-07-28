@@ -7,8 +7,7 @@ router.post("/user/login", userController.UserLogin);
 
 router.get("/get", userController.getUsers);
 
-//protected routes
-
+//protected route
 router.post("/withdraw-amount/:userId", userController.withdrawAmount);
 
 router.post(
